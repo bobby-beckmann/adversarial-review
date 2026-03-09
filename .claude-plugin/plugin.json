@@ -1,0 +1,11 @@
+{
+  "name": "adversarial-review",
+  "version": "1.0.0",
+  "description": "Adversarial planning and code review workflow between Claude Code and OpenAI Codex CLI. Enables iterative convergence loops where Claude creates plans/code and Codex provides critical review.",
+  "author": {
+    "name": "Bobby Beckmann"
+  },
+  "homepage": "https://github.com/bobby-beckmann/adversarial-review",
+  "repository": "https://github.com/bobby-beckmann/adversarial-review",
+  "license": "MIT"
+}
