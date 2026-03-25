@@ -35,7 +35,7 @@ Post-implementation code review on your current git changes.
 Clone this repository into your Claude Code plugins directory:
 
 ```bash
-git clone git@github.com:bobby-beckmann/adversarial-review.git ~/.claude/plugins/adversarial-review
+git clone https://github.com/bobby-beckmann/adversarial-review.git ~/.claude/plugins/adversarial-review
 ```
 
 Then restart Claude Code (or run `/reload-plugins` if available). The `/adversarial-plan` and `/adversarial-review` commands will be available in all projects.
