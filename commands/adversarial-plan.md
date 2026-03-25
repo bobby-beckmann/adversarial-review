@@ -47,12 +47,12 @@ Starting at iteration 1, loop up to **20 iterations**. For each iteration N (sta
 
    Iteration 1:
    ```
-   bash ~/.claude/plugins/adversarial-review/scripts/codex-review.sh $SESSION_DIR/plan_v1.md $SESSION_DIR/review_v1.md plan "$(pwd)"
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/codex-review.sh" $SESSION_DIR/plan_v1.md $SESSION_DIR/review_v1.md plan "$(pwd)"
    ```
 
    Iteration 2+:
    ```
-   bash ~/.claude/plugins/adversarial-review/scripts/codex-review.sh $SESSION_DIR/plan_v2.md $SESSION_DIR/review_v2.md plan "$(pwd)" $SESSION_DIR/review_v1.md
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/codex-review.sh" $SESSION_DIR/plan_v2.md $SESSION_DIR/review_v2.md plan "$(pwd)" $SESSION_DIR/review_v1.md
    ```
 
    Always pass the previous iteration's review file (review_v{N-1}.md) as the last argument on follow-up iterations.

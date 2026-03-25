@@ -58,6 +58,8 @@ You may want to add `.adversarial-review/` to your project's `.gitignore`.
 
 ## Customization
 
-- **Iteration limit**: Currently hardcoded to 20 in the command files. Edit the commands in the plugin's `commands/` directory to change.
-- **Review prompts**: Customize what Codex evaluates by editing the plugin's `scripts/codex-review.sh`.
-- **Review types**: The script supports `plan` (architectural review) and `code` (code change review) types.
+Plugin files are installed to the Claude Code plugin cache. To customize, fork the repo and point your marketplace at your fork, or edit files in the cache directly (changes will be overwritten on update).
+
+- **Iteration limit**: Currently hardcoded to 20 in the command files (`commands/adversarial-plan.md`, `commands/adversarial-review.md`)
+- **Review prompts**: Customize what Codex evaluates by editing `scripts/codex-review.sh`
+- **Review types**: The script supports `plan` (architectural review) and `code` (code change review) types

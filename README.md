@@ -32,13 +32,20 @@ Post-implementation code review on your current git changes.
 
 ## Installation
 
-Clone this repository into your Claude Code plugins directory:
+Add the marketplace and install the plugin in Claude Code:
 
-```bash
-git clone https://github.com/bobby-beckmann/adversarial-review.git ~/.claude/plugins/adversarial-review
+```
+/plugin marketplace add bobby-beckmann/adversarial-review
+/plugin install adversarial-review@adversarial-review
 ```
 
-Then restart Claude Code (or run `/reload-plugins` if available). The `/adversarial-plan` and `/adversarial-review` commands will be available in all projects.
+The `/adversarial-plan` and `/adversarial-review` commands will be available in all projects.
+
+## Updating
+
+```
+/plugin update adversarial-review@adversarial-review
+```
 
 ## Convergence Protocol
 
