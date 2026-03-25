@@ -15,17 +15,23 @@ The user has invoked `/adversarial-review`. Follow these steps exactly:
 
 ### Step 1: Setup
 
-Use the Bash tool to run: `mkdir -p .claude/adversarial`
+Generate a unique session slug and create the session directory. Use the Bash tool to run:
+
+```
+SLUG=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-z' | fold -w 4 | head -n 3 | tr '\n' '-' | sed 's/-$//'); SESSION_DIR=".adversarial-review/$SLUG"; mkdir -p "$SESSION_DIR"; ln -sfn "$SLUG" .adversarial-review/latest; echo "$SESSION_DIR"
+```
+
+**IMPORTANT:** The output of this command is the session directory path (e.g., `.adversarial-review/abcd-efgh-ijkl`). Use this exact path as `$SESSION_DIR` in ALL subsequent steps. Every file you read or write in this workflow goes inside this directory.
 
 ### Step 2: Gather Context
 
 1. **Read the plan** (if it exists) for implementation context:
-   Use the Read tool on `.claude/adversarial/plan_final.md` if it exists. This provides context about the intent behind the changes.
+   Use the Read tool on `.adversarial-review/latest/plan_final.md` if it exists. This provides context about the intent behind the changes. Note: the `latest` symlink may point to a previous planning session.
 
 2. **Capture current changes.** Use the Bash tool to run:
 
    ```
-   git diff HEAD > .claude/adversarial/diff_for_review.md 2>/dev/null; git diff --cached >> .claude/adversarial/diff_for_review.md 2>/dev/null; if [ ! -s .claude/adversarial/diff_for_review.md ]; then git diff main...HEAD > .claude/adversarial/diff_for_review.md 2>/dev/null || git diff origin/main...HEAD > .claude/adversarial/diff_for_review.md 2>/dev/null || echo "No changes detected" > .claude/adversarial/diff_for_review.md; fi
+   git diff HEAD > $SESSION_DIR/diff_for_review.md 2>/dev/null; git diff --cached >> $SESSION_DIR/diff_for_review.md 2>/dev/null; if [ ! -s $SESSION_DIR/diff_for_review.md ]; then git diff main...HEAD > $SESSION_DIR/diff_for_review.md 2>/dev/null || git diff origin/main...HEAD > $SESSION_DIR/diff_for_review.md 2>/dev/null || echo "No changes detected" > $SESSION_DIR/diff_for_review.md; fi
    ```
 
    If the diff is empty or says "No changes detected", inform the user and stop.
@@ -38,17 +44,17 @@ Starting at iteration 1, loop up to **20 iterations**. For each iteration N (sta
 
    Iteration 1:
    ```
-   bash ~/.claude/plugins/adversarial-review/scripts/codex-review.sh .claude/adversarial/diff_for_review.md .claude/adversarial/code_review_v1.md code "$(pwd)"
+   bash ~/.claude/plugins/adversarial-review/scripts/codex-review.sh $SESSION_DIR/diff_for_review.md $SESSION_DIR/code_review_v1.md code "$(pwd)"
    ```
 
    Iteration 2+:
    ```
-   bash ~/.claude/plugins/adversarial-review/scripts/codex-review.sh .claude/adversarial/diff_for_review.md .claude/adversarial/code_review_v2.md code "$(pwd)" .claude/adversarial/code_review_v1.md
+   bash ~/.claude/plugins/adversarial-review/scripts/codex-review.sh $SESSION_DIR/diff_for_review.md $SESSION_DIR/code_review_v2.md code "$(pwd)" $SESSION_DIR/code_review_v1.md
    ```
 
    Always pass the previous iteration's review file (code_review_v{N-1}.md) as the last argument on follow-up iterations.
 
-2. **Read the review.** Use the Read tool to read `.claude/adversarial/code_review_vN.md` (using the actual number).
+2. **Read the review.** Use the Read tool to read `$SESSION_DIR/code_review_vN.md` (using the actual number).
 
 3. **Check verdict:**
    - If the review contains `APPROVED`:
@@ -60,7 +66,7 @@ Starting at iteration 1, loop up to **20 iterations**. For each iteration N (sta
      - After making fixes, re-capture the updated diff using the Bash tool:
 
        ```
-       git diff HEAD > .claude/adversarial/diff_for_review.md 2>/dev/null; git diff --cached >> .claude/adversarial/diff_for_review.md 2>/dev/null; if [ ! -s .claude/adversarial/diff_for_review.md ]; then git diff main...HEAD > .claude/adversarial/diff_for_review.md 2>/dev/null || git diff origin/main...HEAD > .claude/adversarial/diff_for_review.md 2>/dev/null || echo "No changes detected" > .claude/adversarial/diff_for_review.md; fi
+       git diff HEAD > $SESSION_DIR/diff_for_review.md 2>/dev/null; git diff --cached >> $SESSION_DIR/diff_for_review.md 2>/dev/null; if [ ! -s $SESSION_DIR/diff_for_review.md ]; then git diff main...HEAD > $SESSION_DIR/diff_for_review.md 2>/dev/null || git diff origin/main...HEAD > $SESSION_DIR/diff_for_review.md 2>/dev/null || echo "No changes detected" > $SESSION_DIR/diff_for_review.md; fi
        ```
 
      - Continue the loop with the next iteration number
@@ -81,6 +87,6 @@ Display to the user:
 
 Tell the user:
 
-> The adversarial code review is complete. All artifacts are saved in `.claude/adversarial/`.
+> The adversarial code review is complete. All artifacts are saved in `$SESSION_DIR/`.
 >
-> You can review the individual round feedback in `code_review_v*.md` files.
+> You can review the individual round feedback in `$SESSION_DIR/code_review_v*.md` files.

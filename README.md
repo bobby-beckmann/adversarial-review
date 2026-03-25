@@ -32,9 +32,13 @@ Post-implementation code review on your current git changes.
 
 ## Installation
 
+Clone this repository into your Claude Code plugins directory:
+
+```bash
+git clone git@github.com:bobby-beckmann/adversarial-review.git ~/.claude/plugins/adversarial-review
 ```
-/plugin install adversarial-review
-```
+
+Then restart Claude Code (or run `/reload-plugins` if available). The `/adversarial-plan` and `/adversarial-review` commands will be available in all projects.
 
 ## Convergence Protocol
 
@@ -47,15 +51,21 @@ Reviews are calibrated to be pragmatic. A simple script doesn't get the same scr
 
 ## Artifacts
 
-All review artifacts are saved to `.claude/adversarial/` in your project root:
+Each run creates a unique session directory under `.adversarial-review/` in your project root:
 
-| File | Description |
-|------|-------------|
-| `plan_v1.md`, `plan_v2.md`, ... | Plan iterations |
-| `review_v1.md`, `review_v2.md`, ... | Codex review of each plan version |
-| `plan_final.md` | Converged final plan |
-| `diff_for_review.md` | Code changes sent for review |
-| `code_review_v1.md`, ... | Codex code review rounds |
+```
+.adversarial-review/
+  latest -> abcd-efgh-ijkl/       # symlink to most recent session
+  abcd-efgh-ijkl/
+    plan_v1.md, plan_v2.md, ...   # plan iterations
+    review_v1.md, review_v2.md, ... # Codex reviews of each plan
+    plan_final.md                  # converged final plan
+  mnop-qrst-uvwx/
+    diff_for_review.md             # code changes sent for review
+    code_review_v1.md, ...         # Codex code review rounds
+```
+
+Previous sessions are preserved. You may want to add `.adversarial-review/` to your `.gitignore`.
 
 ## Customization
 

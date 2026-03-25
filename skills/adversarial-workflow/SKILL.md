@@ -38,18 +38,26 @@ Convergence typically happens in 2-3 iterations. The 20-iteration limit is a saf
 
 ## Artifact Storage
 
-All artifacts are saved to `.claude/adversarial/` in the project root:
+All artifacts are saved to `.adversarial-review/<session-slug>/` in the project root. Each run of `/adversarial-plan` or `/adversarial-review` creates a new session directory with a unique slug, so previous sessions are preserved.
 
-| File | Description |
-|------|-------------|
-| `plan_v1.md`, `plan_v2.md`, ... | Plan iterations |
-| `review_v1.md`, `review_v2.md`, ... | Codex review of each plan version |
-| `plan_final.md` | Converged (or best-effort) final plan |
-| `diff_for_review.md` | Code changes sent for review |
-| `code_review_v1.md`, `code_review_v2.md`, ... | Codex code review rounds |
+A `latest` symlink at `.adversarial-review/latest` always points to the most recent session. This is used by `/adversarial-review` to find `plan_final.md` from a prior planning session.
+
+```
+.adversarial-review/
+  latest -> abcd-efgh-ijkl/
+  abcd-efgh-ijkl/           # planning session
+    plan_v1.md, plan_v2.md, ...
+    review_v1.md, review_v2.md, ...
+    plan_final.md
+  mnop-qrst-uvwx/           # code review session
+    diff_for_review.md
+    code_review_v1.md, code_review_v2.md, ...
+```
+
+You may want to add `.adversarial-review/` to your project's `.gitignore`.
 
 ## Customization
 
-- **Iteration limit**: Currently hardcoded to 20 in the command files. Edit the commands in `~/.claude/plugins/adversarial-review/commands/` to change.
-- **Review prompts**: Customize what Codex evaluates by editing `~/.claude/plugins/adversarial-review/scripts/codex-review.sh`.
+- **Iteration limit**: Currently hardcoded to 20 in the command files. Edit the commands in the plugin's `commands/` directory to change.
+- **Review prompts**: Customize what Codex evaluates by editing the plugin's `scripts/codex-review.sh`.
 - **Review types**: The script supports `plan` (architectural review) and `code` (code change review) types.
